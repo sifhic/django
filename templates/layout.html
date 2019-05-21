@@ -1,0 +1,86 @@
+{% extends 'application.html' %}
+
+{% load staticfiles %}
+
+{% block app %}
+
+
+
+    <div class="header fixed-top">
+        <div class="container-fluid">
+            <nav class="navbar navbar-expand-lg navbar-light ">
+                <a class="navbar-brand" href="{% url 'core:dashboard' %}">
+                    <img src="{% static 'images/logo.png' %}" alt="" style="width: 70%;">
+                </a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown"
+                        aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Action</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Another</a>
+                        </li>
+
+                        <li class="nav-item dropdown dropdown-slide dropdown-hover">
+                            <a href="#" data-toggle="dropdown" class="dropdown-toggle nav-link dropdown-user-link">
+                                    <span class="avatar">
+                                        <img src="{% static 'images/user.png' %}" alt="avatar"><i></i></span>
+                                <h6 class="user-name"> {{ request.user.username }}</h6>
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                <a class="dropdown-item" href="{% url 'authentication:settings' %}">Profile</a>
+
+                                <a class="dropdown-item" href="{% url 'authentication:logout' %}">Log Out</a>
+
+                                {% if request.user.is_superuser %}
+                                <a class="dropdown-item" href="{% url 'admin:index' %}">Admin</a>
+                                {% endif %}
+                                <!-- <a class="dropdown-item" href="#">Something else here</a>-->
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+    </div>
+
+
+    <div class="main-body">
+        <div class="container">
+
+            {% if not request.user.salesnavigatoraccount.logged_in %}
+            <div class="alert alert-danger" role="alert">
+              Please First Do 123 <a class="alert-link" href="{% url 'core:dashboard' %}">Here</a>
+            </div>
+            {% endif %}
+
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+
+    <div class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <p>2019 - django-starter</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block layout_scripts %}
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+            integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+            integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+            integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script src="{% static 'js/main.js' %}" type="text/javascript"></script>
+
+{% endblock %}

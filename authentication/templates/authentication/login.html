@@ -1,0 +1,87 @@
+{% extends 'authentication/layout.html' %}
+{% load web_filters %}
+{% load static %}
+
+{% block content %}
+
+
+    <div class="row">
+        <div class="col-md-5 mx-auto">
+
+            <div class="col-md-12 text-center">
+                <img src="{% static 'images/logo.png' %}" alt="" style="width: 100%;"/>
+            </div>
+
+            <form action="" method="post" name="login">
+                {% csrf_token %}
+                {% if form.non_field_errors %}
+                    {% for non_field_error in form.non_field_errors %}
+                        <p>{{ non_field_error }}</p>
+                    {% endfor %}
+                {% endif %}
+
+                {% for field in form %}
+                    {% if field.errors %}
+                        {% for error in field.errors %}
+                            <p style="color: red">Error {{ error }}</p>
+                        {% endfor %}
+                    {% endif %}
+
+                    {% if field.name == 'username' %}
+
+
+                        <div class="form-group has-search">
+                            <label for="{{ field.id_for_label }}">Email address or Username</label>
+                            <span class="fa fa-user form-control-feedback"></span>
+                            <input type="text" name="username" class="form-control" id="{{ field.id_for_label }}"
+                                   placeholder="user@domain.com">
+                        </div>
+
+
+                    {% elif field.name == 'password' %}
+
+
+
+
+                        <div class="form-group has-search">
+                            <label for="{{ field.id_for_label }}">Password</label>
+                            <span class="fa fa-lock form-control-feedback"></span>
+                            <input type="password" id="{{ field.id_for_label }}" name="password" class="form-control"
+                                   placeholder="********">
+                            <div class="text-right">
+                                <small><a href="{% url 'authentication:password_reset' %}">Forgot password?</a></small>
+                            </div>
+                        </div>
+
+
+
+                    {% else %}
+
+
+                        <div class="form-group">
+                            {{ field|addclass:'form-control' }}
+
+                        </div>
+
+                    {% endif %}
+                {% endfor %}
+
+
+
+                <div class="form-group text-center ">
+                    <button type="submit" class=" btn btn-block mybtn btn-login tx-tfm">Login</button>
+                </div>
+
+                <div class="form-group">
+                    <p class="text-center singup-text">Don't have account? Sign up for free trial</p>
+                </div>
+
+                <div class="form-group text-center ">
+                    <a href="{% url 'authentication:signup' %}" class=" btn btn-block mybtn btn-signup tx-tfm">Sign Up</a>
+                </div>
+            </form>
+
+        </div>
+    </div>
+
+{% endblock %}
