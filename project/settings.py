@@ -16,7 +16,7 @@ import errno
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-PROJECT_NAME = 'salesleadgen'
+PROJECT_NAME = 'project1'
 INSTANCE_DIR = '/tmp/' + PROJECT_NAME + '/'
 
 
@@ -159,7 +159,7 @@ USE_TZ = True
 
 # used to build full urls outside the context of a request
 #  if project is served from a subdirectory
-BASE_PATH = '/projects/salesleadgen' # ''
+BASE_PATH = '' # '' or '/projects/project1'
 
 INDEX_URL = 'core:dashboard'
 LOGIN_URL = 'authentication:login'
