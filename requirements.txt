@@ -1,5 +1,5 @@
 # minimal
-Django==2.1.7
+Django==2.1.9
 Pillow==6.0.0
 
 # tasks
