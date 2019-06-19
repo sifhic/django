@@ -15,7 +15,7 @@ from django.views.decorators.csrf import csrf_protect, ensure_csrf_cookie
 from django.views.decorators.debug import sensitive_post_parameters
 from django.views.generic import FormView, RedirectView
 
-from .forms import SignUpForm,AccountSettingsForm
+from .forms import SignUpForm,AccountSettingsForm,AccountInviteForm
 from django.contrib.auth import get_user_model
 from authentication.models import Email
 from django.conf import settings
@@ -24,7 +24,7 @@ import django
 Account = get_user_model()
 
 # Create your views here.
-log = logging.getLogger(__name__)
+lgr = logging.getLogger(__name__)
 
 
 def activate(request, uidb64, token):
@@ -67,7 +67,7 @@ class LoginView(FormView):
     def dispatch(self, request, *args, **kwargs):
         # Sets a test cookie to make sure the user has cookies enabled
         # request.session.set_test_cookie()
-        # log.info("Test Cookie Set")
+        # lgr.info("Test Cookie Set")
         return super(LoginView, self).dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
@@ -81,7 +81,7 @@ class LoginView(FormView):
         # If the test cookie worked, go ahead and
         # delete it since its no longer needed
         # if self.request.session.test_cookie_worked():
-        #    log.info('test cookie worked')
+        #    lgr.info('test cookie worked')
         #    self.request.session.delete_test_cookie()
 
         return super(LoginView, self).form_valid(form)
@@ -109,7 +109,7 @@ class RegisterView(FormView):
     def dispatch(self, request, *args, **kwargs):
         # Sets a test cookie to make sure the user has cookies enabled
         # request.session.set_test_cookie()
-        # log.info("Test Cookie Set")
+        # lgr.info("Test Cookie Set")
         return super(RegisterView, self).dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
@@ -203,3 +203,77 @@ class AccountSettingsView(FormView):
             redirect_to = self.success_url
         return redirect_to
 
+from django.template.loader import render_to_string
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
+import random
+import string
+
+
+def random_string(stringLength=10):
+    """Generate a random string of fixed length """
+    letters = string.ascii_lowercase
+    return ''.join(random.choice(letters) for i in range(stringLength))
+
+
+def account_invite(request):
+    if request.method == "POST":
+        lgr.info(request.POST)
+        form = AccountInviteForm(request.POST)
+        if form.is_valid():
+            password = random_string()
+
+            user = Account()
+            user.is_staff = False
+            user.is_superuser = False
+            user.is_active = False
+            user.email = form.cleaned_data['email']
+            user.set_password(password)
+            user.save()
+
+            if settings.PORT == 443 or settings.PORT == 80:
+                PORT = ''
+            else:
+                PORT = (':{}'.format(settings.PORT) if settings.PORT else '')
+
+            subject = 'Activate Your {} Account'.format(settings.PROJECT_NAME)
+            message = render_to_string('authentication/account_invite_email.html', {
+                'user': user,
+                'protocol': settings.PROTOCOL,
+                'domain': settings.HOST + PORT,
+                'password': password,
+                'uid': urlsafe_base64_encode(force_bytes(user.pk)).decode('utf-8'),
+                'token': default_token_generator.make_token(user),
+            })
+
+            user.email_user(subject, message, from_email='noreply@'+settings.DOMAIN)
+
+            return redirect('/')
+        else:
+            lgr.error('account invite form error')
+            lgr.error(form.errors)
+
+    else:
+        form = AccountInviteForm()
+
+    return render(request, 'authentication/account_invite.html',{
+        'form':form
+    })
+
+
+def invite_accept(request, uidb64, token):
+    try:
+        uid = force_text(urlsafe_base64_decode(uidb64))
+        user = Account.objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, Account.DoesNotExist):
+        user = None
+
+    if user is not None and default_token_generator.check_token(user, token):
+        user.is_active = True
+        user.save()
+
+        login(request, user,backend='authentication.backends.username_or_email.UsernameEmailBackend')
+        return redirect(settings.INDEX_URL)
+
+    else:
+        return render(request, 'authentication/account_activation_invalid.html')

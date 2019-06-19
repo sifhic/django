@@ -181,12 +181,14 @@ LOGIN_SESSION_REDIRECT_HOME_URLS = (
     'authentication:password_reset_complete', # password_reset/done/
     'authentication:account_activation_sent', # account_activation_sent/
     'authentication:activate',# 'activate/',
+    'authentication:invite-accept',# 'activate/',
 )
 
 # used for mailer links
 PROTOCOL = 'http'
 HOST = 'localhost'
 PORT = 8000
+DOMAIN = '{}.com'.format(PROJECT_NAME)
 
 if DEBUG:
     # EMAIL_HOST = 'smtp.mailtrap.io'

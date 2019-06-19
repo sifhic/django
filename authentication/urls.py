@@ -2,7 +2,7 @@ from django.conf.urls import url
 from django.urls import reverse_lazy
 from django.contrib.auth import views as auth_views
 
-from .views import account_activation_sent
+from .views import account_activation_sent,account_invite,invite_accept
 from authentication import views as core
 
 app_name = 'authentication'
@@ -11,6 +11,10 @@ urlpatterns = [
 
     url(r'^login/$', core.LoginView.as_view(), name='login'),
     url(r'^signup/$', core.RegisterView.as_view(), name='signup'),
+    url(r'^invite/$', account_invite, name='invite'),
+    url(r'^invite/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/accept$',
+        invite_accept,
+        name='invite-accept'),
     url(r'^logout/$', core.LogoutView.as_view(), name='logout'),
     url(r'^profile/$', core.AccountSettingsView.as_view(), name='settings'),
 

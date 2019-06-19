@@ -48,3 +48,6 @@ class SignInForm(AuthenticationForm):
         label='Username or Email' # the form is extended to edit this label
     )
 
+
+class AccountInviteForm(forms.Form):
+    email = forms.EmailField(help_text='User Email',required=True)
