@@ -1,0 +1,61 @@
+{% extends 'layout.html' %}
+{% load web_filters %}
+
+{% block content %}
+
+        <form action="{% url 'core:credentials:create' %}" method="post">
+            {% csrf_token %}
+
+            <div class="row" style="margin-top: 3%;">
+                <div class="col-md-12">
+                    <h6>Create</h6>
+                </div>
+            </div>
+            <div class="row" style="margin-top: 3%;">
+
+                <div class="col-md-5">
+
+
+                    {% for field in form %}
+                        <div class="form-group">
+
+
+                            {% if field.name == 'industry' %}
+
+                                <label for="industry">Industry</label>
+                                <select id="industry"
+                                        name="industry"
+                                        class="custom-select ta" data-type="INDUSTRY"
+                                        multiple></select>
+
+                           {% else %}
+
+                            {{ field.label_tag }}
+                            {{ field|addclass:'form-control' }}
+                            <small> {{ field.help_text|safe }}</small>
+
+                            {% endif %}
+                            {% include 'partial/field_error.html' %}
+
+                        </div>
+
+                    {% endfor %}
+
+
+                </div>
+
+
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <input type="submit" name="submit" class="btn mybtn btn-submit-search tx-tfm" value="Submit">
+                    </div>
+                </div>
+            </div>
+        </form>
+
+
+
+{% endblock %}
