@@ -1,8 +1,6 @@
 # starter
 django projects starter
 
-[on gitlab](link to gitlab repo)
-
 ## Features
 
 - django  2.1.7
@@ -26,11 +24,7 @@ django projects starter
 django-admin startapp --template=https://github.com/danleyb2/django-starter/archive/master.zip app1
 
 
-## Built 
-[danleyb2.online](link to danleyb2.online)
 
 
-## Support Project Maintenance
-[https://www.paypal.me/danleyb2](https://www.paypal.me/danleyb2)
 
 
